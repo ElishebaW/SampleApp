@@ -2,10 +2,10 @@ require 'test_helper'
 
 class SessionHelperTest < ActionView::TestCase
   
-  def setup
+   def setup
     @user = users(:michael)
-  remember (@user)
-  end
+    remember(@user)
+   end
  
  test"current_user returns right user when session is nil" do
    assert_equal @user, current_user
