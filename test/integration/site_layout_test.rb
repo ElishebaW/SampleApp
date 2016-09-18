@@ -13,5 +13,9 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
    assert_select "title", ("Contact")
    get signup_path
    assert_select "title", ("Sign up")
-   end
+   get users_path
+   assert_select "a[href=?]", user_path(@user)
+   assert_select log_in_as (@user)
+   assert_not select log_in_as(@user) 
+ end
 end
