@@ -7,9 +7,9 @@ class UserTest < ActiveSupport::TestCase
     password: "foobar", password_confirmation: "foobar")
   end
  
-test "should be valid" do 
+  test "should be valid" do 
   assert @user.valid?
-end
+  end
 
   
 test "name should be present" do
@@ -66,7 +66,15 @@ test "email address should be unique" do
     assert_not @user.valid?
   end
 
- test "authenticated? should return false for a user with nil digest" do
+  test "authenticated? should return false for a user with nil digest" do
     assert_not @user.authenticated?(:remember, '')
-    end
+  end
+  
+  test "associated microposts should be destroyed" do
+    @user.save
+    @user.microposts.create!(content: "Lorem ipsum")
+    assert_difference 'Micropost.count', -1 do
+      @user.destroy
+  end
+ end
 end
