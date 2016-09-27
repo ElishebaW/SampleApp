@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+
   
   def setup
     @user = User.new(name:"Example User", email:"user@example.com",
@@ -46,7 +47,7 @@ test "email address should be unique" do
     duplicate_user.email = @user.email.upcase
     @user.save
     assert_not duplicate_user.valid?
-  end
+end
 
 
  test "email addresses should be saved as lower-case" do
@@ -76,5 +77,34 @@ test "email address should be unique" do
     assert_difference 'Micropost.count', -1 do
       @user.destroy
   end
- end
+  
+  test "should follow and unfollow a user" do
+    michael = users(:michael)
+    archer = users(:archer)
+    assert_not michael.following?(archer)
+    michael.follow(archer)
+    assert michael.following?(archer)
+    assert archer.followers.include?(michael)
+    michael.unfollow(archer)
+    assert_not michael.following?(archer)
+  end
+  
+  test "feed should have the right posts" do
+    michael = users(:michael)
+    archer = users(:archer)
+    lana  = users(:lana)
+    #Posts from followed user
+    lana.microposts.each do |post_following|
+      assert michael.feed.include?(post_following)
+    end
+    #Posts from self
+    michael.microposts.each do |post_self|
+      assert michael.feed.include?(post_self)
+    end
+    #posts from unfolloweduser
+    archer.microposts.each do |post_unfollowed|
+    assert_not michael.feed.include?(post_unfollowed)
+    end
+  end
+  end
 end
